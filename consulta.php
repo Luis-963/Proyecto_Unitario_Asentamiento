@@ -84,7 +84,7 @@ $resultado = $stmt_consulta->fetchAll(PDO::FETCH_ASSOC);
             </div>
             <div class="contenedor_botones" style="margin-bottom: 0;">
                 <button type="submit" class="boton btn_buscar">BUSCAR / FILTRAR</button>
-                <a href="consulta.php" class="boton btn_eliminar">LIMPIAR</a>
+                <a href="consulta.php" class="boton btn_eliminar" style="text-align:center;">LIMPIAR</a>
             </div>
         </form>
 
@@ -112,11 +112,19 @@ $resultado = $stmt_consulta->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <div class="paginacion">
-            <a href="<?php echo url_paginacion(1); ?>" class="btn_paginacion <?php if($pagina_actual<=1) echo 'deshabilitado'; ?>">Primera</a>
-            <a href="<?php echo url_paginacion(max(1, $pagina_actual-1)); ?>" class="btn_paginacion <?php if($pagina_actual<=1) echo 'deshabilitado'; ?>">Anterior</a>
-            <span class="texto_paginas">Página <?php echo $pagina_actual; ?> de <?php echo $total_paginas; ?></span>
-            <a href="<?php echo url_paginacion(min($total_paginas, $pagina_actual+1)); ?>" class="btn_paginacion <?php if($pagina_actual>=$total_paginas) echo 'deshabilitado'; ?>">Siguiente</a>
-            <a href="<?php echo url_paginacion($total_paginas); ?>" class="btn_paginacion <?php if($pagina_actual>=$total_paginas) echo 'deshabilitado'; ?>">Última</a>
+            <a href="<?php echo url_paginacion(1); ?>" class="btn_paginacion <?php if($pagina_actual<=1) echo 'deshabilitado'; ?>">&lt;&lt;</a>
+            <a href="<?php echo url_paginacion(max(1, $pagina_actual-1)); ?>" class="btn_paginacion <?php if($pagina_actual<=1) echo 'deshabilitado'; ?>">&lt;</a>
+            
+            <select class="select_paginacion" onchange="window.location.href=this.value;">
+                <?php for($i = 1; $i <= $total_paginas; $i++): ?>
+                    <option value="<?php echo url_paginacion($i); ?>" <?php if($i == $pagina_actual) echo 'selected'; ?>>
+                        <?php echo $i; ?>
+                    </option>
+                <?php endfor; ?>
+            </select>
+            
+            <a href="<?php echo url_paginacion(min($total_paginas, $pagina_actual+1)); ?>" class="btn_paginacion <?php if($pagina_actual>=$total_paginas) echo 'deshabilitado'; ?>">&gt;</a>
+            <a href="<?php echo url_paginacion($total_paginas); ?>" class="btn_paginacion <?php if($pagina_actual>=$total_paginas) echo 'deshabilitado'; ?>">&gt;&gt;</a>
         </div>
     </div>
 </body>

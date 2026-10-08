@@ -241,6 +241,25 @@ table tr:nth-child(even) {
 .alerta_exito { background-color: var(--color-acento); color: var(--color-primario); }
 .alerta_error { background-color: #ffcccc; color: #a94442; }
 
+/* Estilos para el selector de paginación */
+.select_paginacion {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 15px;
+    color: var(--color-primario);
+    background-color: var(--color-blanco);
+    cursor: pointer;
+    outline: none;
+}
+
+.select_paginacion:focus {
+    border-color: var(--color-secundario);
+    box-shadow: 0 0 5px var(--color-acento);
+}
+
+
 @media (max-width: 768px) {
     .barra_navegacion { flex-direction: column; gap: 10px; text-align: center; }
     .contenedor_botones { flex-direction: column; }
