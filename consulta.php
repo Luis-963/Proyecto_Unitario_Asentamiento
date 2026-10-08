@@ -3,6 +3,12 @@ require 'conexion.php';
 session_start();
 if (!isset($_SESSION['usuario_activo'])) { header("Location: index.php"); exit(); }
 
+function url_paginacion($pagina) {
+    $parametros = $_GET;
+    $parametros['pagina'] = $pagina;
+    return '?' . http_build_query($parametros);
+}
+
 $busqueda_nombre = $_GET['busqueda_nombre'] ?? '';
 $busqueda_estado = $_GET['busqueda_estado'] ?? '';
 $busqueda_muni = $_GET['busqueda_muni'] ?? '';

@@ -3,6 +3,12 @@ require 'conexion.php';
 session_start();
 if (!isset($_SESSION['usuario_activo'])) { header("Location: index.php"); exit(); }
 
+function url_paginacion($pagina) {
+    $parametros = $_GET;
+    $parametros['pagina'] = $pagina;
+    return '?' . http_build_query($parametros);
+}
+
 $mensaje = "";
 $tipos = $conexion->query("SELECT * FROM tipo_asentamiento")->fetchAll();
 $municipios = $conexion->query("SELECT * FROM municipio")->fetchAll();

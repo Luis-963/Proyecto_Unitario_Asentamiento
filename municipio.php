@@ -3,6 +3,12 @@ require 'conexion.php';
 session_start();
 if (!isset($_SESSION['usuario_activo'])) { header("Location: index.php"); exit(); }
 
+function url_paginacion($pagina) {
+    $parametros = $_GET;
+    $parametros['pagina'] = $pagina;
+    return '?' . http_build_query($parametros);
+}
+
 $mensaje = "";
 $estados = $conexion->query("SELECT id_estado, nombre FROM estado")->fetchAll(PDO::FETCH_ASSOC);
 
