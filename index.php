@@ -6,7 +6,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usuario = $_POST['usuario'];
     $contrasena = $_POST['contrasena'];
 
-    // Validación simple de ejemplo (En producción conectar a tabla usuarios)
     if (!empty($usuario) && !empty($contrasena)) {
         $_SESSION['usuario_activo'] = $usuario;
         header("Location: inicio.php");
