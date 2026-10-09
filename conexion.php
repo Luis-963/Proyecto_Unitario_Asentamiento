@@ -1,7 +1,7 @@
 <?php
 $servidor = "localhost";
 $usuario_bd = "root";
-$contrasena_bd = ""; // Coloca tu contraseña si tienes una
+$contrasena_bd = ""; 
 $nombre_bd = "prueba_6to_1";
 
 try {

@@ -11,7 +11,6 @@ if (!isset($_SESSION['usuario_activo'])) { header("Location: index.php"); exit()
     <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
-    <!-- ESTA BARRA DE NAVEGACIÓN DEBE INCLUIRSE EN TODAS LAS PANTALLAS (estado, municipio, etc.) -->
     <nav class="barra_navegacion">
         <div class="enlaces_nav">
             <a href="inicio.php" class="activo">Inicio</a>
@@ -21,6 +20,7 @@ if (!isset($_SESSION['usuario_activo'])) { header("Location: index.php"); exit()
             <a href="zona.php">ZONA</a>
             <a href="consulta.php">Consultas Generales</a>
         </div>
+        <!-- Botón corregido apuntando a index.php -->
         <a href="index.php" class="boton_salir">SALIR</a>
     </nav>
 

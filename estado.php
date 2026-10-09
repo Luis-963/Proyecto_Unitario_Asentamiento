@@ -1,7 +1,10 @@
 <?php
 require 'conexion.php';
 session_start();
-if (!isset($_SESSION['usuario_activo'])) { header("Location: index.php"); exit(); }
+if (!isset($_SESSION['usuario_activo'])) {
+    header("Location: index.php");
+    exit();
+}
 
 $mensaje = "";
 
@@ -21,9 +24,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->execute([$id_nuevo, $nombre_nuevo, $id_antiguo]);
             $mensaje = "<div class='mensaje_alerta alerta_exito'>Actualizado correctamente.</div>";
         } elseif ($accion == 'eliminar' && $id_antiguo != '') {
-            $stmt = $conexion->prepare("DELETE FROM estado WHERE id_estado = ?");
-            $stmt->execute([$id_antiguo]);
-            $mensaje = "<div class='mensaje_alerta alerta_exito'>Eliminado correctamente.</div>";
+            // Verificar si hay municipios dependientes
+            $check = $conexion->prepare("SELECT COUNT(*) FROM municipio WHERE id_estado = ?");
+            $check->execute([$id_antiguo]);
+            $dependientes = $check->fetchColumn();
+
+            if ($dependientes > 0) {
+                $mensaje = "<div class='mensaje_alerta alerta_error'>
+            No se puede eliminar: existen <b>$dependientes</b> municipio(s) asociados a este estado.
+        </div>";
+            } else {
+                $stmt = $conexion->prepare("DELETE FROM estado WHERE id_estado = ?");
+                $stmt->execute([$id_antiguo]);
+                $mensaje = "<div class='mensaje_alerta alerta_exito'>Eliminado correctamente.</div>";
+            }
         }
     } catch (PDOException $e) {
         $mensaje = "<div class='mensaje_alerta alerta_error'>Error: " . $e->getMessage() . "</div>";
@@ -46,6 +60,7 @@ $lista_estados = $conexion->query("SELECT id_estado, nombre FROM estado $where L
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Gestión de Estados</title>
@@ -61,6 +76,7 @@ $lista_estados = $conexion->query("SELECT id_estado, nombre FROM estado $where L
         }
     </script>
 </head>
+
 <body>
     <nav class="barra_navegacion">
         <div class="enlaces_nav">
@@ -109,7 +125,7 @@ $lista_estados = $conexion->query("SELECT id_estado, nombre FROM estado $where L
                     <input type="text" id="nombre_estado" name="nombre_estado" required maxlength="50">
                 </div>
             </div>
-            
+
             <div class="contenedor_botones">
                 <button type="submit" name="accion" value="guardar" class="boton btn_guardar">GUARDAR NUEVO</button>
                 <button type="submit" name="accion" value="editar" class="boton btn_editar">EDITAR SELECCIONADO</button>
@@ -119,25 +135,31 @@ $lista_estados = $conexion->query("SELECT id_estado, nombre FROM estado $where L
 
         <div class="contenedor_tabla">
             <table>
-                <thead><tr><th>Clave</th><th>Nombre</th></tr></thead>
-                <tbody>
-                    <?php foreach($lista_estados as $e): ?>
-                    <tr class="fila_seleccionable" onclick="seleccionarFila(this)">
-                        <td><?php echo htmlspecialchars($e['id_estado']); ?></td>
-                        <td><?php echo htmlspecialchars($e['nombre']); ?></td>
+                <thead>
+                    <tr>
+                        <th>Clave</th>
+                        <th>Nombre</th>
                     </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($lista_estados as $e): ?>
+                        <tr class="fila_seleccionable" onclick="seleccionarFila(this)">
+                            <td><?php echo htmlspecialchars($e['id_estado']); ?></td>
+                            <td><?php echo htmlspecialchars($e['nombre']); ?></td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
 
         <div class="paginacion">
-            <a href="<?php echo url_paginacion(1); ?>" class="btn_paginacion <?php if($pagina_actual<=1) echo 'deshabilitado'; ?>">Primera</a>
-            <a href="<?php echo url_paginacion(max(1, $pagina_actual-1)); ?>" class="btn_paginacion <?php if($pagina_actual<=1) echo 'deshabilitado'; ?>">Anterior</a>
+            <a href="<?php echo url_paginacion(1); ?>" class="btn_paginacion <?php if ($pagina_actual <= 1) echo 'deshabilitado'; ?>">Primera</a>
+            <a href="<?php echo url_paginacion(max(1, $pagina_actual - 1)); ?>" class="btn_paginacion <?php if ($pagina_actual <= 1) echo 'deshabilitado'; ?>">Anterior</a>
             <span class="texto_paginas">Página <?php echo $pagina_actual; ?> de <?php echo $total_paginas; ?></span>
-            <a href="<?php echo url_paginacion(min($total_paginas, $pagina_actual+1)); ?>" class="btn_paginacion <?php if($pagina_actual>=$total_paginas) echo 'deshabilitado'; ?>">Siguiente</a>
-            <a href="<?php echo url_paginacion($total_paginas); ?>" class="btn_paginacion <?php if($pagina_actual>=$total_paginas) echo 'deshabilitado'; ?>">Última</a>
+            <a href="<?php echo url_paginacion(min($total_paginas, $pagina_actual + 1)); ?>" class="btn_paginacion <?php if ($pagina_actual >= $total_paginas) echo 'deshabilitado'; ?>">Siguiente</a>
+            <a href="<?php echo url_paginacion($total_paginas); ?>" class="btn_paginacion <?php if ($pagina_actual >= $total_paginas) echo 'deshabilitado'; ?>">Última</a>
         </div>
     </div>
 </body>
+
 </html>

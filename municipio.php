@@ -1,9 +1,13 @@
 <?php
 require 'conexion.php';
 session_start();
-if (!isset($_SESSION['usuario_activo'])) { header("Location: index.php"); exit(); }
+if (!isset($_SESSION['usuario_activo'])) {
+    header("Location: index.php");
+    exit();
+}
 
-function url_paginacion($pagina) {
+function url_paginacion($pagina)
+{
     $parametros = $_GET;
     $parametros['pagina'] = $pagina;
     return '?' . http_build_query($parametros);
@@ -30,9 +34,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->execute([$id_nuevo, $nombre_nuevo, $estado_nuevo, $oficina_nueva, $id_antiguo]);
             $mensaje = "<div class='mensaje_alerta alerta_exito'>Actualizado correctamente.</div>";
         } elseif ($accion == 'eliminar' && $id_antiguo != '') {
-            $stmt = $conexion->prepare("DELETE FROM municipio WHERE id_municipio=?");
-            $stmt->execute([$id_antiguo]);
-            $mensaje = "<div class='mensaje_alerta alerta_exito'>Eliminado correctamente.</div>";
+            // Verificar si hay asentamientos dependientes
+            $check = $conexion->prepare("SELECT COUNT(*) FROM asentamiento WHERE id_municipio = ?");
+            $check->execute([$id_antiguo]);
+            $dependientes = $check->fetchColumn();
+
+            if ($dependientes > 0) {
+                $mensaje = "<div class='mensaje_alerta alerta_error'>
+            No se puede eliminar: existen <b>$dependientes</b> asentamiento(s) asociados a este municipio.
+        </div>";
+            } else {
+                $stmt = $conexion->prepare("DELETE FROM municipio WHERE id_municipio = ?");
+                $stmt->execute([$id_antiguo]);
+                $mensaje = "<div class='mensaje_alerta alerta_exito'>Eliminado correctamente.</div>";
+            }
         }
     } catch (PDOException $e) {
         $mensaje = "<div class='mensaje_alerta alerta_error'>Error: " . $e->getMessage() . "</div>";
@@ -55,6 +70,7 @@ $lista_municipios = $conexion->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Municipio / Ciudad</title>
@@ -75,6 +91,7 @@ $lista_municipios = $conexion->query($sql)->fetchAll(PDO::FETCH_ASSOC);
         }
     </script>
 </head>
+
 <body>
     <nav class="barra_navegacion">
         <div class="enlaces_nav">
@@ -122,7 +139,7 @@ $lista_municipios = $conexion->query($sql)->fetchAll(PDO::FETCH_ASSOC);
                     <label>Estado</label>
                     <select id="estado" name="id_estado" required>
                         <option value="">Seleccione...</option>
-                        <?php foreach($estados as $est): ?>
+                        <?php foreach ($estados as $est): ?>
                             <option value="<?php echo $est['id_estado']; ?>"><?php echo $est['nombre']; ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -136,7 +153,7 @@ $lista_municipios = $conexion->query($sql)->fetchAll(PDO::FETCH_ASSOC);
                     <input type="number" id="oficina" name="oficina" required>
                 </div>
             </div>
-            
+
             <div class="contenedor_botones">
                 <button type="submit" name="accion" value="guardar" class="boton btn_guardar">GUARDAR NUEVO</button>
                 <button type="submit" name="accion" value="editar" class="boton btn_editar">EDITAR SELECCIONADO</button>
@@ -146,35 +163,43 @@ $lista_municipios = $conexion->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="contenedor_tabla">
             <table>
-                <thead><tr><th>Clave</th><th>Nombre</th><th>Estado</th><th>Oficina</th></tr></thead>
-                <tbody>
-                    <?php foreach($lista_municipios as $m): ?>
-                    <tr class="fila_seleccionable" onclick="seleccionarFila(this, '<?php echo $m['id_estado']; ?>')">
-                        <td><?php echo htmlspecialchars($m['id_municipio']); ?></td>
-                        <td><?php echo htmlspecialchars($m['nombre']); ?></td>
-                        <td><?php echo htmlspecialchars($m['estado_nombre']); ?></td>
-                        <td><?php echo htmlspecialchars($m['oficina']); ?></td>
+                <thead>
+                    <tr>
+                        <th>Clave</th>
+                        <th>Nombre</th>
+                        <th>Estado</th>
+                        <th>Oficina</th>
                     </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($lista_municipios as $m): ?>
+                        <tr class="fila_seleccionable" onclick="seleccionarFila(this, '<?php echo $m['id_estado']; ?>')">
+                            <td><?php echo htmlspecialchars($m['id_municipio']); ?></td>
+                            <td><?php echo htmlspecialchars($m['nombre']); ?></td>
+                            <td><?php echo htmlspecialchars($m['estado_nombre']); ?></td>
+                            <td><?php echo htmlspecialchars($m['oficina']); ?></td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
 
         <div class="paginacion">
-            <a href="<?php echo url_paginacion(1); ?>" class="btn_paginacion <?php if($pagina_actual<=1) echo 'deshabilitado'; ?>">&lt;&lt;</a>
-            <a href="<?php echo url_paginacion(max(1, $pagina_actual-1)); ?>" class="btn_paginacion <?php if($pagina_actual<=1) echo 'deshabilitado'; ?>">&lt;</a>
-            
+            <a href="<?php echo url_paginacion(1); ?>" class="btn_paginacion <?php if ($pagina_actual <= 1) echo 'deshabilitado'; ?>">&lt;&lt;</a>
+            <a href="<?php echo url_paginacion(max(1, $pagina_actual - 1)); ?>" class="btn_paginacion <?php if ($pagina_actual <= 1) echo 'deshabilitado'; ?>">&lt;</a>
+
             <select class="select_paginacion" onchange="window.location.href=this.value;">
-                <?php for($i = 1; $i <= $total_paginas; $i++): ?>
-                    <option value="<?php echo url_paginacion($i); ?>" <?php if($i == $pagina_actual) echo 'selected'; ?>>
+                <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
+                    <option value="<?php echo url_paginacion($i); ?>" <?php if ($i == $pagina_actual) echo 'selected'; ?>>
                         <?php echo $i; ?>
                     </option>
                 <?php endfor; ?>
             </select>
-            
-            <a href="<?php echo url_paginacion(min($total_paginas, $pagina_actual+1)); ?>" class="btn_paginacion <?php if($pagina_actual>=$total_paginas) echo 'deshabilitado'; ?>">&gt;</a>
-            <a href="<?php echo url_paginacion($total_paginas); ?>" class="btn_paginacion <?php if($pagina_actual>=$total_paginas) echo 'deshabilitado'; ?>">&gt;&gt;</a>
+
+            <a href="<?php echo url_paginacion(min($total_paginas, $pagina_actual + 1)); ?>" class="btn_paginacion <?php if ($pagina_actual >= $total_paginas) echo 'deshabilitado'; ?>">&gt;</a>
+            <a href="<?php echo url_paginacion($total_paginas); ?>" class="btn_paginacion <?php if ($pagina_actual >= $total_paginas) echo 'deshabilitado'; ?>">&gt;&gt;</a>
         </div>
     </div>
 </body>
+
 </html>

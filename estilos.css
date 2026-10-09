@@ -19,7 +19,7 @@ body {
     color: var(--color-primario);
 }
 
-/* Cabecera Fija */
+/* Cabecera Fija*/
 .barra_navegacion {
     background-color: var(--color-primario);
     padding: 15px 20px;
@@ -30,7 +30,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 4px 6px rgba(4, 17, 34, 0.3);
+    box-shadow: 0 4px 6px rgba(4, 17, 34, 0.5);
 }
 
 .enlaces_nav a {
@@ -78,6 +78,7 @@ fieldset {
     padding: 15px;
     border-radius: 5px;
     margin-bottom: 20px;
+    background-color: #fcfcfc;
 }
 
 legend {
@@ -199,32 +200,43 @@ table tr:nth-child(even) {
     gap: 10px;
     margin-top: 20px;
     flex-wrap: wrap;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
 }
 
 .btn_paginacion {
-    background-color: var(--color-secundario);
-    color: var(--color-blanco);
+    background-color: #e0e0e0;
+    color: var(--color-primario);
     padding: 8px 12px;
     text-decoration: none;
     border-radius: 5px;
     font-weight: bold;
+    border: 1px solid #ccc;
     transition: background 0.3s;
 }
 
 .btn_paginacion:hover {
-    background-color: var(--color-acento);
-    color: var(--color-primario);
+    background-color: #d0d0d0;
 }
 
 .btn_paginacion.deshabilitado {
-    background-color: #cccccc;
-    color: #666666;
+    background-color: #f9f9f9;
+    color: #aaa;
     pointer-events: none;
+    border-color: #eee;
 }
 
-.texto_paginas {
+.select_paginacion {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
     font-weight: bold;
-    color: var(--color-primario);
+    font-size: 15px;
+    color: var(--color-secundario);
+    background-color: var(--color-blanco);
+    cursor: pointer;
+    outline: none;
 }
 
 /* Mensajes y Login */
@@ -240,25 +252,6 @@ table tr:nth-child(even) {
 }
 .alerta_exito { background-color: var(--color-acento); color: var(--color-primario); }
 .alerta_error { background-color: #ffcccc; color: #a94442; }
-
-/* Estilos para el selector de paginación */
-.select_paginacion {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 15px;
-    color: var(--color-primario);
-    background-color: var(--color-blanco);
-    cursor: pointer;
-    outline: none;
-}
-
-.select_paginacion:focus {
-    border-color: var(--color-secundario);
-    box-shadow: 0 0 5px var(--color-acento);
-}
-
 
 @media (max-width: 768px) {
     .barra_navegacion { flex-direction: column; gap: 10px; text-align: center; }
