@@ -1,0 +1,25 @@
+Requisitos para instalar el sistema.
+
+Sistema Operativo del Servidor: Linux (Ubuntu, Debian, CentOS) o Windows Server.
+
+Servidor Local: XAMPP, WAMP o equivalente.
+
+Servidor Web: Apache.
+
+Base de Datos: MySQL 5.7+ o MariaDB 10.x+.
+
+Lenguaje Back-end: PHP 7.4 o versión 8.x.
+
+Extensiones PHP requeridas: PDO (pdo_mysql) habilitado en el archivo php.ini para que la conexión a la base de datos funcione de forma segura.
+
+Hardware Recomendado: Cualquier procesador multi-núcleo y desde 4GB de memoria RAM será suficiente para el servidor local y el navegador funcionando sin problemas.
+
+Soporte PHP: Versión 7.4+ con PDO y acceso para modificar variables de entorno si es necesario.
+
+Almacenamiento: Mínimo 1 GB de espacio en disco.
+
+Navegador Web: Google Chrome, Mozilla Firefox, Microsoft Edge o Safari actualizados.
+
+JavaScript: Habilitado en el navegador.
+
+Resolución: Diseño responsivo adaptable, optimizado para resoluciones desde móviles (360px de ancho) hasta monitores de escritorio (1080p).

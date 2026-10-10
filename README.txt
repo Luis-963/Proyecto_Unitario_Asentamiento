@@ -6,4 +6,5 @@ Integrantes:
 3.-Ramos Mendoza Jennifer LLolanda
 4.-Solache Valverde Luis Miguel
 5.-Valencia Pedro Eduardo Imanol
-Profesor: Rivera Ponce Alejandro Javier
+Profesor: Rivera Ponce Alejandro Javier.
+
