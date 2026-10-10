@@ -1,0 +1,222 @@
+*////////////////////////////////////////////////////// BD //////////////////////////////////////////////////////////*
+create database prueba_6to_1;
+use prueba_6to_1;
+
+create table estado(
+ id_estado int(3) primary key,
+ nombre varchar(50),
+ unique (nombre)
+);
+
+create table municipio(
+  id_municipio VARCHAR(4) PRIMARY KEY,
+  nombre VARCHAR(100),
+  id_estado int(3),
+  oficina int(6),
+  FOREIGN KEY (id_estado) references estado(id_estado)
+);
+
+create table municipio(
+  id_municipio INT,
+  nombre VARCHAR(100),
+  id_estado int(3),
+  oficina int(6),
+  PRIMARY KEY (id_municipio, id_estado),
+  FOREIGN KEY (id_estado) references estado(id_estado)
+);
+
+CREATE TABLE zona (
+    id_zona INT PRIMARY KEY,
+    nombre VARCHAR(30)
+);
+
+CREATE TABLE tipo_asentamiento (
+    id_tipo_asentamiento INT PRIMARY KEY,
+    nombre VARCHAR(40)
+);
+
+CREATE TABLE ciudad (
+    id_ciudad INT PRIMARY KEY,
+    nombre VARCHAR(100),
+    id_municipio INT,
+    FOREIGN KEY (id_municipio) REFERENCES municipio(id_municipio)
+);
+
+CREATE TABLE asentamiento (
+    id_asentamiento INT PRIMARY KEY,
+    nombre VARCHAR(100),
+    id_tipo_asentamiento INT,
+    cp_asentamiento VARCHAR(50),
+    id_zona INT,
+    d_codigo INT,
+    id_municipio INT,
+    FOREIGN KEY (id_tipo_asentamiento)
+        REFERENCES tipo_asentamiento(id_tipo_asentamiento),
+    FOREIGN KEY (id_zona)
+        REFERENCES zona(id_zona),
+    FOREIGN KEY (id_municipio)
+	REFERENCES municipio(id_municipio)
+);
+
+
+
+*////////////////////////////////////////////////////// AUDITORIAS //////////////////////////////////////////////////////////*
+
+create table auditoria_estado(
+  id_auditoria_estado INT AUTO_INCREMENT PRIMARY KEY,
+  accion VARCHAR(20),
+  nuevo_id_estado INT,
+  viejo_id_estado INT,
+  nuevo_nombre VARCHAR(50),
+  viejo_nombre VARCHAR(50),
+  fecha_mov TIMESTAMP DEFAULT current_timestamp,
+  usuario VARCHAR(40)
+);
+
+INSERT INTO auditoria_estado (accion, nuevo_id_estado, nuevo_nombre, usuario) 
+VALUES ('Insertar', 1, "Aguascalientes", current_user());
+
+CREATE TABLE auditoria_zona (
+  id_auditoria_zona INT AUTO_INCREMENT PRIMARY KEY,
+  accion VARCHAR(20),
+  nuevo_id_zona INT,
+  viejo_id_zona INT,
+  nuevo_nombre VARCHAR(30),
+  viejo_nombre VARCHAR(30),
+  fecha_mov TIMESTAMP DEFAULT current_timestamp,
+  usuario VARCHAR(40)
+);
+
+INSERT INTO auditoria_zona (accion, nuevo_id_zona, nuevo_nombre, usuario) 
+VALUES ('Insertar', 1, "Urbano", current_user());
+
+create table auditoria_municipio(
+  id_auditoria_zona INT AUTO_INCREMENT PRIMARY KEY,
+  accion VARCHAR(20),
+  nuevo_id_municipio INT,
+  viejo_id_municipio INT,
+  nuevo_nombre VARCHAR(100),
+  viejo_nombre VARCHAR(100),
+  nuevo_id_estado int(3),
+  viejo_id_estado int(3),
+  nuevo_oficina int(6),
+  viejo_oficina int(6),
+  fecha_mov TIMESTAMP DEFAULT current_timestamp,
+  usuario VARCHAR(40)
+);
+
+INSERT INTO auditoria_municipio (accion, nuevo_id_municipio, nuevo_nombre, nuevo_id_estado, nuevo_oficina, usuario) 
+VALUES ('Insertar', 1, "Casas", 1, 202445,current_user());
+
+CREATE TABLE auditoria_tipo_asentamiento (
+  id_auditoria_tipo_asentamiento INT AUTO_INCREMENT PRIMARY KEY,
+  accion VARCHAR(20),
+  nuevo_id_tipo_asentamiento INT,
+  viejo_id_tipo_asentamiento INT,
+  nuevo_nombre VARCHAR(40),
+  viejo_nombre VARCHAR(40),
+  fecha_mov TIMESTAMP DEFAULT current_timestamp,
+  usuario VARCHAR(40)
+);
+
+INSERT INTO auditoria_tipo_asentamiento (accion, id_tipo_asentamiento, nuevo_nombre, usuario) 
+VALUES ('Insertar', 1, "Colonia", current_user());
+
+CREATE TABLE auditoria_ciudad (
+  id_auditoria_ciudad INT AUTO_INCREMENT PRIMARY KEY,
+  accion VARCHAR(20),
+  nuevo_id_ciudad INT,
+  viejo_id_ciudad INT,
+  nuevo_nombre VARCHAR(100),
+  viejo_nombre VARCHAR(100),
+  nuevo_id_municipio VARCHAR(4),
+  viejo_id_municipio VARCHAR(4),
+  fecha_mov TIMESTAMP DEFAULT current_timestamp,
+  usuario VARCHAR(40)
+);
+
+INSERT INTO auditoria_ciudad (accion, nuevo_id_ciudad, nuevo_nombre, nuevo_id_municipio, usuario) 
+VALUES ('Insertar', 1, "Nuevas Casas", 1, current_user());
+
+CREATE TABLE auditoria_asentamiento (
+  id_auditoria_asentamiento INT AUTO_INCREMENT PRIMARY KEY,
+  accion VARCHAR(20),
+  nuevo_id_asentamiento INT,
+  viejo_id_asentamiento INT,
+  nuevo_nombre VARCHAR(100),
+  viejo_nombre VARCHAR(100),
+  nuevo_id_tipo_asentamiento INT,
+  viejo_id_tipo_asentamiento INT,
+  nuevo_cp_asentamiento VARCHAR(50),
+  viejo_cp_asentamiento VARCHAR(50),
+  nuevo_id_zona INT,
+  viejo_id_zona INT,
+  nuevo_d_codigo INT,
+  viejo_d_codigo INT,
+  nuevo_id_municipio INT,
+  viejo_id_municipio INT,
+  fecha_mov TIMESTAMP DEFAULT current_timestamp,
+  usuario VARCHAR(40)
+);
+
+INSERT INTO auditoria_asentamiento (accion, nuevo_id_asentamiento, nuevo_nombre, nuevo_id_tipo_asentamiento, nuevo_cp_asentamiento, nuevo_id_zona, nuevo_d_codigo, nuevo_id_municipio, usuario) 
+VALUES ('Insertar', 1, "Asentamiento Nuevas Casas", 1, 21456, 1, 21648, current_user());
+
+SELECT * FROM auditoria_estado;
+SELECT * FROM auditoria_zona;
+SELECT * FROM auditoria_municipio;
+SELECT * FROM auditoria_tipo_asentamiento;
+SELECT * FROM auditoria_ciudad ;
+SELECT * FROM auditoria_asentamiento;
+
+*////////////////////////////////////////////////// Consultas (interfaces) //////////////////////////////////////////////////////*
+
+//Estado (nombre y clave del estado)
+SELECT 
+    nombre AS Nombre_Estado, 
+    id_estado AS Clave_Estado
+FROM estado;
+
+//Municipio (Nombre, Estado, Clave y oficina)
+SELECT 
+    m.nombre AS Nombre_Municipio, 
+    e.nombre AS Estado, 
+    m.id_municipio AS Clave_Municipio, 
+    m.oficina AS Oficina
+FROM municipio m, estado e
+WHERE m.id_estado = e.id_estado;
+
+//Asentamiento (Nombre, Tipo de Asentamiento, Municipio, Código de asentamiento y zona)
+SELECT 
+    a.nombre AS Nombre_Asentamiento, 
+    ta.nombre AS Tipo_Asentamiento, 
+    m.nombre AS Municipio, 
+    a.d_codigo AS Codigo_Asentamiento, 
+    z.nombre AS Zona
+FROM asentamiento a, tipo_asentamiento ta, municipio m, zona z
+WHERE a.id_tipo_asentamiento = ta.id_tipo_asentamiento
+  AND a.id_municipio = m.id_municipio
+  AND a.id_zona = z.id_zona;
+
+//Zona (Nombre y Clave de la zona)
+SELECT 
+    nombre AS Nombre_Zona, 
+    id_zona AS Clave_Zona
+FROM zona;
+
+//Consulta general (nombre asentamiento, estado, municipio ciudad, código, zona y tipo asentamiento)
+SELECT 
+    a.nombre AS Nombre_Asentamiento, 
+    e.nombre AS Estado, 
+    m.nombre AS Municipio, 
+    c.nombre AS Ciudad, 
+    a.d_codigo AS Codigo_Asentamiento, 
+    z.nombre AS Zona, 
+    ta.nombre AS Tipo_Asentamiento
+FROM asentamiento a, estado e, municipio m, ciudad c, zona z, tipo_asentamiento ta
+WHERE a.id_municipio = m.id_municipio
+  AND m.id_estado = e.id_estado
+  AND c.id_municipio = m.id_municipio
+  AND a.id_zona = z.id_zona
+  AND a.id_tipo_asentamiento = ta.id_tipo_asentamiento;
+

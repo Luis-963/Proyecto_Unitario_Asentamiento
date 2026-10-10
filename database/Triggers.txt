@@ -1,0 +1,240 @@
+*////////////////////////////////////////////////// Triggers //////////////////////////////////////////////////////*
+DELIMITER //
+CREATE TRIGGER estado_auditar_insert
+AFTER INSERT ON estado
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_estado (accion, nuevo_id_estado, nuevo_nombre, usuario) 
+VALUES ('Insertar', NEW.id_estado, NEW.nombre, current_user());
+end //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER estado_auditar_delete
+AFTER DELETE ON estado
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_estado (accion, viejo_id_estado, viejo_nombre, usuario) 
+VALUES ('Eliminar', old.id_estado, old.nombre, current_user());
+end //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER estado_auditar_update
+AFTER UPDATE ON estado
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_estado (accion, nuevo_id_estado, viejo_id_estado, nuevo_nombre, viejo_nombre, usuario) 
+VALUES ('Actualizar', new.id_estado, old.id_estado, new.nombre, old.nombre, current_user());
+end //
+DELIMITER ;
+
+INSERT INTO estado VALUES(34, 'Prueba');
+UPDATE estado SET id_estado = 34 ,nombre = 'P' WHERE estado.id_estado = 34;
+DELETE FROM estado WHERE id_estado = 33;
+SELECT * FROM auditoria_estado;
+
+***************************************
+
+DELIMITER //
+CREATE TRIGGER zona_auditar_insert
+AFTER INSERT ON zona
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_zona (accion, nuevo_id_zona, nuevo_nombre, usuario) 
+VALUES ('Insertar', new.id_zona, new.nombre, current_user());
+end //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER zona_auditar_delete
+AFTER DELETE ON zona
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_zona (accion, viejo_id_zona, viejo_nombre, usuario) 
+VALUES ('Eliminar', old.id_zona, old.nombre, current_user());
+end //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER zona_auditar_update
+AFTER UPDATE ON zona
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_zona (accion, nuevo_id_zona, viejo_id_zona, nuevo_nombre, viejo_nombre, usuario) 
+VALUES ('Actualozar', new.id_zona, old.id_zona, new.nombre, old.nombre, current_user());
+end //
+DELIMITER ;
+
+INSERT INTO zona VALUES(10, 'Prueba');
+UPDATE zona SET id_zona = 11 ,nombre = 'P' WHERE zona.id_zona = 10;
+DELETE FROM zona WHERE id_zona = 11;
+SELECT * FROM auditoria_zona;
+
+***************************************
+
+DELIMITER //
+CREATE TRIGGER tipo_asentamiento_auditar_insert
+AFTER INSERT ON tipo_asentamiento
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_tipo_asentamiento (accion, nuevo_id_tipo_asentamiento, nuevo_nombre, usuario) 
+VALUES ('Insertar', new.id_tipo_asentamiento, new.nombre, current_user());
+end //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER tipo_asentamiento_auditar_delete
+AFTER DELETE ON tipo_asentamiento
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_tipo_asentamiento (accion, viejo_id_tipo_asentamiento, viejo_nombre, usuario) 
+VALUES ('Eliminar', old.id_tipo_asentamiento, old.nombre, current_user());
+end //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER tipo_asentamiento_auditar_update
+AFTER UPDATE ON tipo_asentamiento
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_tipo_asentamiento (accion, nuevo_id_tipo_asentamiento, viejo_id_tipo_asentamiento, nuevo_nombre, viejo_nombre, usuario) 
+VALUES ('Actualizar', new.id_tipo_asentamiento, old.id_tipo_asentamiento, new.nombre, old.nombre, current_user());
+end //
+DELIMITER ;
+
+INSERT INTO tipo_asentamiento VALUES(34, 'Prueba');
+UPDATE tipo_asentamiento SET id_tipo_asentamiento = 35 ,nombre = 'P' WHERE tipo_asentamiento.id_tipo_asentamiento = 34;
+DELETE FROM tipo_asentamiento WHERE id_tipo_asentamiento = 35;
+SELECT * FROM auditoria_tipo_asentamiento;
+
+***************************************
+
+DELIMITER //
+CREATE TRIGGER municipio_auditar_insert
+AFTER INSERT ON municipio
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_municipio (accion, nuevo_id_municipio, nuevo_nombre, nuevo_id_estado, nuevo_oficina, usuario) 
+VALUES ('Insertar', new.id_municipio, new.nombre, new.id_estado, new.oficina, current_user());
+end //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER municipio_auditar_delete
+AFTER DELETE ON municipio
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_municipio (accion, viejo_id_municipio, viejo_nombre, viejo_id_estado, viejo_oficina, usuario) 
+VALUES ('Eliminar', old.id_municipio, old.nombre, old.id_estado, old.oficina, current_user());
+end //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER municipio_auditar_update
+AFTER UPDATE ON municipio
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_municipio (accion, nuevo_id_municipio, viejo_id_municipio, nuevo_nombre, viejo_nombre, nuevo_id_estado, viejo_id_estado, nuevo_oficina, viejo_oficina, usuario) 
+VALUES ('Actualizar', new.id_municipio, old.id_municipio, new.nombre, old.nombre, new.id_estado, old.id_estado, new.oficina, old.oficina, current_user());
+end //
+DELIMITER ;
+
+INSERT INTO municipio VALUES(3020, 'Prueba', 34, 9999);
+UPDATE municipio SET id_municipio = 3021 ,nombre = 'P' WHERE municipio.id_municipio = 3020;
+DELETE FROM municipio WHERE id_municipio = 3021;
+SELECT * FROM auditoria_municipio;
+
+***************************************
+
+DELIMITER //
+CREATE TRIGGER ciudad_auditar_insert
+AFTER INSERT ON ciudad
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_ciudad (accion, nuevo_id_ciudad, nuevo_nombre, nuevo_id_municipio, usuario) 
+VALUES ('Insertar', new.id_ciudad, new.nombre, new.id_municipio, current_user());
+end //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER ciudad_auditar_delete
+AFTER DELETE ON ciudad
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_ciudad (accion, viejo_id_ciudad, viejo_nombre, viejo_id_municipio, usuario) 
+VALUES ('Eliminar', old.id_ciudad, old.nombre, old.id_municipio, current_user());
+end //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER ciudad_auditar_update
+AFTER UPDATE ON ciudad
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_ciudad (accion, nuevo_id_ciudad, viejo_id_ciudad, nuevo_nombre, viejo_nombre, nuevo_id_municipio, viejo_id_municipio, usuario) 
+VALUES ('Actualizar', new.id_ciudad, old.id_ciudad, new.nombre, old.nombre, new.id_municipio, old.id_municipio, current_user());
+end //
+DELIMITER ;
+
+INSERT INTO ciudad VALUES(680, 'Prueba', 3021);
+UPDATE ciudad SET id_ciudad = 681 ,nombre = 'P' WHERE ciudad.id_ciudad = 680;
+DELETE FROM ciudad WHERE id_ciudad = 681;
+SELECT * FROM auditoria_ciudad;
+
+***************************************
+
+DELIMITER //
+CREATE TRIGGER asentamiento_auditar_insert
+AFTER INSERT ON asentamiento
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_asentamiento (accion, nuevo_id_asentamiento, nuevo_nombre, nuevo_id_tipo_asentamiento, nuevo_cp_asentamiento, nuevo_id_zona, nuevo_d_codigo, nuevo_id_municipio, usuario) 
+VALUES ('Insertar', new.id_asentamiento, new.nombre, new.id_tipo_asentamiento, new.cp_asentamiento, new.id_zona, new.d_codigo, new.id_municipio, current_user());
+end //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER asentamiento_auditar_delete
+AFTER DELETE ON asentamiento
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_asentamiento (accion, viejo_id_asentamiento, viejo_nombre, viejo_id_tipo_asentamiento, viejo_cp_asentamiento, viejo_id_zona, viejo_d_codigo, viejo_id_municipio, usuario) 
+VALUES ('Eliminar', old.id_asentamiento, old.nombre, old.id_tipo_asentamiento, old.cp_asentamiento, old.id_zona, old.d_codigo, old.id_municipio, current_user());
+end //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER asentamiento_auditar_update
+AFTER UPDATE ON asentamiento
+FOR EACH ROW
+
+begin
+INSERT INTO auditoria_asentamiento (accion, nuevo_id_asentamiento, viejo_id_asentamiento, nuevo_nombre, viejo_nombre, nuevo_id_tipo_asentamiento, viejo_id_tipo_asentamiento, nuevo_cp_asentamiento, viejo_cp_asentamiento, nuevo_id_zona, viejo_id_zona, nuevo_d_codigo, viejo_d_codigo, nuevo_id_municipio, viejo_id_municipio, usuario) 
+VALUES ('Actualizar', new.id_asentamiento, old.id_asentamiento, new.nombre, old.nombre, new.id_tipo_asentamiento, old.id_tipo_asentamiento, new.cp_asentamiento, old.cp_asentamiento, new.id_zona, old.id_zona, new.d_codigo, old.d_codigo, new.id_municipio, old.id_municipio, current_user());
+end //
+DELIMITER ;
+
+INSERT INTO asentamiento VALUES(160000, 'Prueba', 35, 'asd', 11, 56156, 3021);
+UPDATE asentamiento SET id_asentamiento = 160001 ,nombre = 'P', id_tipo_asentamiento = 35, cp_asentamiento = '', id_zona = 11, d_codigo = 11111, id_municipio = 3021 WHERE asentamiento.id_asentamiento = 160000;
+DELETE FROM asentamiento WHERE id_asentamiento = 160001;
+SELECT * FROM auditoria_asentamiento;
+
+***************************************
